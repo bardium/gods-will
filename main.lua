@@ -1,7 +1,6 @@
 --[[
 CREDITS:
 UI Library: Inori & wally
-URL Cache: wally
 Script: goosebetter
 ]]
 
@@ -267,7 +266,7 @@ local Window = UI:CreateWindow({
 	AutoShow = true,
 
 	Center = true,
-	Size = UDim2.fromOffset(550, 327),
+	Size = UDim2.fromOffset(550, 527),
 })
 
 local Tabs = {}
@@ -391,7 +390,7 @@ local function addRichText(label)
 end
 
 addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">Goose Better</font> - script'))
-addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">wally & Inori</font> - ui library'))
+addRichText(Groups.Credits:AddLabel('<font color="#3da5ff">wally & Inori</font> - ui library'))
 
 
 Groups.UISettings = Tabs.UISettings:AddRightGroupbox('UI Settings')
