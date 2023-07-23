@@ -313,11 +313,6 @@ Groups.Games:AddButton('Finish Sled Game', function()
 		end
 	end)
 end)
-Groups.Games:AddButton('Disappear From Hide and Seek', function()
-	pcall(function()
-		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
-	end)
-end)
 
 Groups.Misc = Tabs.Main:AddRightGroupbox('Misc')
 Groups.Misc:AddToggle('DisableGameChecks', { Text = 'Disable In Game Checks' })
@@ -401,6 +396,16 @@ Groups.Blatant:AddButton('TP To Rocket', function()
 		else
 			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
 		end
+	end)
+end)
+Groups.Blatant:AddButton('Disappear From Hide and Seek', function()
+	pcall(function()
+		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
+	end)
+end)
+Groups.Blatant:AddButton('Disappear From Dodgeball', function()
+	pcall(function()
+		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 80, client.Character:GetPivot().Position.Z))
 	end)
 end)
 
