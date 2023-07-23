@@ -1,5 +1,5 @@
 return {
-	version = '1.02',
+	version = '1.03',
 	updated = '7/23/2023',
-	message = 'disappear from hide and seek'
+	message = 'finish daruma game, better doors highlighting'
 }
