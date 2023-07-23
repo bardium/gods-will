@@ -315,11 +315,7 @@ Groups.Games:AddButton('Finish Sled Game', function()
 end)
 Groups.Games:AddButton('Disappear From Hide and Seek', function()
 	pcall(function()
-		if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.TheyHaveToHide.Value == true then
-			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
-		else
-			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
-		end
+		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
 	end)
 end)
 
@@ -415,6 +411,7 @@ addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">Goose Better</font> -
 addRichText(Groups.Credits:AddLabel('<font color="#3da5ff">wally & Inori</font> - ui library'))
 
 Groups.UISettings = Tabs.UISettings:AddRightGroupbox('UI Settings')
+Groups.UISettings:AddLabel(metadata.message or 'no message found!', true)
 Groups.UISettings:AddDivider()
 Groups.UISettings:AddButton('Unload Script', function() pcall(shared._unload) end)
 Groups.UISettings:AddButton('Copy Discord', function()
