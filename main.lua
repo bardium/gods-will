@@ -136,32 +136,26 @@ do
 			task.wait()
 			if ((Toggles.HighlightCorrectDoors) and (Toggles.HighlightCorrectDoors.Value)) then
 				if workspace:FindFirstChild('CorrectDoor') and workspace:FindFirstChild('MainRooms') and workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true) then
-					if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DoorsGameOn.Value == true then
-						local diamondPlateRooms = workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true)
-
-						for _, v in ipairs(diamondPlateRooms:GetChildren()) do
-							if v:FindFirstChild('ActualDoor') and v.ActualDoor:FindFirstChild('Door') and v.ActualDoor.Door:FindFirstChildOfClass('Decal') then
-								if v.ActualDoor.Door:FindFirstChildOfClass('Decal').Texture == workspace.CorrectDoor.Value then
-									if not v.ActualDoor:FindFirstChild('correctDoorHighlight') then
-										local correctDoorHighlight = Instance.new('BoxHandleAdornment', v.ActualDoor)
-										correctDoorHighlight.Name = 'correctDoorHighlight'
-										correctDoorHighlight.Adornee = v.ActualDoor
-										correctDoorHighlight.AlwaysOnTop = true
-										correctDoorHighlight.ZIndex = 0
-										correctDoorHighlight.Size = v.ActualDoor:GetExtentsSize()
-										correctDoorHighlight.Transparency = 0.5
-										correctDoorHighlight.Color = BrickColor.new('Lime green')
-									end
-								else
-									if v.ActualDoor:FindFirstChild('correctDoorHighlight') then
-										v.ActualDoor.correctDoorHighlight:Destroy()
-									end
+					local diamondPlateRooms = workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true)
+					for _, v in ipairs(diamondPlateRooms:GetChildren()) do
+						if v:FindFirstChild('ActualDoor') and v.ActualDoor:FindFirstChild('Door') and v.ActualDoor.Door:FindFirstChildOfClass('Decal') then
+							if v.ActualDoor.Door:FindFirstChildOfClass('Decal').Texture == workspace.CorrectDoor.Value then
+								if not v.ActualDoor:FindFirstChild('correctDoorHighlight') then
+									local correctDoorHighlight = Instance.new('BoxHandleAdornment', v.ActualDoor)
+									correctDoorHighlight.Name = 'correctDoorHighlight'
+									correctDoorHighlight.Adornee = v.ActualDoor
+									correctDoorHighlight.AlwaysOnTop = true
+									correctDoorHighlight.ZIndex = 0
+									correctDoorHighlight.Size = v.ActualDoor:GetExtentsSize()
+									correctDoorHighlight.Transparency = 0.5
+									correctDoorHighlight.Color = BrickColor.new('Lime green')
+								end
+							else
+								if v.ActualDoor:FindFirstChild('correctDoorHighlight') then
+									v.ActualDoor.correctDoorHighlight:Destroy()
 								end
 							end
 						end
-					else
-						UI:Notify('Doors game is over or hasnt started.', 3)
-						Toggles.HighlightCorrectDoors:SetValue(false)
 					end
 				end
 			end
@@ -189,7 +183,7 @@ do
 							end
 						end
 					else
-						UI:Notify('Doors game is over or hasnt started.', 3)
+						UI:Notify("Doors game is over or hasn't started.", 3)
 						Toggles.TPToCorrectDoor:SetValue(false)
 					end
 				end
@@ -264,7 +258,68 @@ do
 		while true do
 			task.wait()
 			if ((Toggles.RequestChairAura) and (Toggles.RequestChairAura.Value)) then
+				if sethidden then
+					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') then
+						for _, v in pairs(game.Players:GetPlayers()) do
+							for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
+								if game.Players[v].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
+									for _, c in pairs(part:GetChildren()) do
+										if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
+											c:Destroy()
+										end
+									end
+									local ForceInstance = Instance.new('BodyPosition')
+									ForceInstance.Parent = part
+									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+									ForceInstance.Position = Vector3.new(0, 0, 0)
+								end
+							end
+						end
+					end
+				else
+					UI:Notify('Incompatible Exploit: Your exploit does not support this command (missing sethiddenproperty)', 5)
+				end
+			end
+		end
+	end)
+	table.insert(shared.callbacks, function()
+		pcall(task.cancel, thread)
+	end)
+end
+
+do
+	local thread = task.spawn(function()
+		while true do
+			task.wait()
+			if ((Toggles.DeleteChairAura) and (Toggles.DeleteChairAura.Value)) then
 				repStorage.RequestChair:FireServer()
+			end
+		end
+	end)
+	table.insert(shared.callbacks, function()
+		pcall(task.cancel, thread)
+	end)
+end
+
+do
+	local thread = task.spawn(function()
+		while true do
+			task.wait()
+			if ((Toggles.AntiPotato) and (Toggles.AntiPotato.Value)) then
+				if workspace:FindFirstChild('Effects') and workspace.Effects:FindFirstChild('PotatoBomb') then
+					if workspace.Effects.PotatoBomb:FindFirstChild('PotatoWeld') and workspace.Effects.PotatoBomb.PotatoWeld.Part0 ~= nil and workspace.Effects.PotatoBomb.PotatoWeld.Part0:IsDescendantOf(client.Character) then
+						for _, v in ipairs(game.Players:GetPlayers()) do
+							if v ~= client and v.Character ~= nil and v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 then
+								local currentPivot = client.Character:GetPivot()
+								repeat
+									client.Character:PivotTo(v.Character:GetPivot())
+									task.wait()
+								until (not workspace.Effects:FindFirstChild('PotatoBomb')) or (not workspace.Effects.PotatoBomb:FindFirstChild('PotatoWeld')) or (workspace.Effects.PotatoBomb.PotatoWeld.Part0 == nil) or (not workspace.Effects.PotatoBomb.PotatoWeld.Part0:IsDescendantOf(client.Character)) or ((not Toggles.AntiPotato) or (not Toggles.AntiPotato.Value))
+								client.Character:PivotTo(currentPivot)
+							end
+						end
+					end
+				end
 			end
 		end
 	end)
@@ -291,23 +346,23 @@ local Groups = {}
 Tabs.Main = Window:AddTab('Main')
 Tabs.UISettings = Window:AddTab('UI Settings')
 
-Groups.Games = Tabs.Main:AddLeftGroupbox('Games')
-Groups.Games:AddToggle('DarumaGameFreeze', { Text = 'Freeze During Daruma Game' })
-Groups.Games:AddSlider('FreezeDelay',   { Text = 'Freeze Delay', Min = 0, Max = 0.65, Default = 0.25, Suffix = 's', Rounding = 3, Compact = true })
+Groups.Legit = Tabs.Main:AddLeftGroupbox('Legit')
+Groups.Legit:AddToggle('DarumaGameFreeze', { Text = 'Freeze During Daruma Game' })
+Groups.Legit:AddSlider('FreezeDelay',   { Text = 'Freeze Delay', Min = 0, Max = 0.65, Default = 0.25, Suffix = 's', Rounding = 3, Compact = true })
 
-local DependencySlider = Groups.Games:AddDependencyBox();
+local DependencySlider = Groups.Legit:AddDependencyBox();
 addRichText(DependencySlider:AddLabel('<font color="#ff430a">Freeze Delay greater than 0.45s can get you killed.</font>', true))
 
 DependencySlider:SetupDependencies({
 	{ Options.FreezeDelay, 0.45 }
 });
 
-Groups.Games:AddToggle('HighlightCorrectDoors', { Text = 'Highlight Correct Doors' })
-Groups.Games:AddToggle('HighlightCorrectChairs', { Text = 'Highlight Correct Chairs' })
-Groups.Games:AddToggle('VoteMostPopular', { Text = 'Vote Most Popular' })
-Groups.Games:AddButton('Finish Sled Game', function()
+Groups.Legit:AddToggle('HighlightCorrectDoors', { Text = 'Highlight Correct Doors' })
+Groups.Legit:AddToggle('HighlightCorrectChairs', { Text = 'Highlight Correct Chairs' })
+Groups.Legit:AddToggle('VoteMostPopular', { Text = 'Vote Most Popular' })
+Groups.Legit:AddButton('Finish Sled Game', function()
 	pcall(function()
-		if workspace:FindFirstChild('Finish') and workspace:FindFirstChild('SledGameInstructionsStop') and ((((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SledGameInstructionsStop.Value == true) then
+		if workspace:FindFirstChild('FinishLine') and workspace:FindFirstChild('SledGameInstructionsStop') and ((((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SledGameInstructionsStop.Value == true) then
 			for _, v in ipairs(client.Character.PrimaryPart:GetChildren()) do
 				if v:IsA('BodyVelocity') or v:IsA('BodyGyro') then
 					v:Destroy()
@@ -315,14 +370,14 @@ Groups.Games:AddButton('Finish Sled Game', function()
 			end
 			task.wait()
 			for _, v in ipairs(workspace:GetChildren()) do
-				if v.Name == 'Finish' and v:IsA('BasePart') then
-					client.Character:PivotTo(v:GetPivot())
+				if v.Name == 'FinishLine' and v:IsA('BasePart') then
+					client.Character:PivotTo(v:GetPivot() * CFrame.new(math.random(-40, 40), 8, math.random(50, 100)))
 				end
 			end
 			task.wait(.1)
 			client.Character:PivotTo(game.Players.LocalPlayer.Character:GetPivot() * CFrame.Angles(math.rad(180), 0, 0))
 		else
-			UI:Notify('Sled game is over or hasnt started.', 3)
+			UI:Notify("Sled game is over or hasn't started.", 3)
 		end
 	end)
 end)
@@ -362,30 +417,30 @@ Groups.Blatant = Tabs.Main:AddRightGroupbox('Blatant')
 Groups.Blatant:AddButton('Finish Daruma Game', function()
 	pcall(function()
 		local button = workspace.DarumaGameMap.GameFunctions.DarumaDoll.ActualThing.Button
-		local prompt = button:FindFirstChildOfClass('ProximityPrompt')
-		local currentPivot = client.Character:GetPivot()
-		client.Character:PivotTo(currentPivot * CFrame.new(0, -100, 0))
-		task.wait(.1)
-		repeat
-			prompt.Enabled = true
-			prompt.RequiresLineOfSight = false
-			client.Character:PivotTo(button:GetPivot() * CFrame.new(0, -2, 0))
-			virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
-			virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
-			task.wait()
-		until workspace.DarumaGameStart.Value == false
-		
-		client.Character:PivotTo(currentPivot)
+		if button:FindFirstChildOfClass('ProximityPrompt') then
+			local prompt = button:FindFirstChildOfClass('ProximityPrompt')
+			local currentPivot = client.Character:GetPivot()
+			client.Character:PivotTo(currentPivot * CFrame.new(0, -100, 0))
+			task.wait(.5)
+			repeat
+				prompt.Enabled = true
+				prompt.RequiresLineOfSight = false
+				client.Character:PivotTo(workspace.DarumaGameMap.GameFunctions.DarumaDoll:GetPivot() * CFrame.new(0, -3, 2))
+				virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
+				virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+				task.wait()
+			until workspace.DarumaGameStart.Value == false or not button:FindFirstChildOfClass('ProximityPrompt')
+			client.Character:PivotTo(currentPivot)
+		end
 	end)
 end)
 Groups.Blatant:AddToggle('TPToCorrectDoor', { Text = 'TP Correct Door Room' })
-Groups.Blatant:AddToggle('RequestChairAura', { Text = 'Throw Chair Aura' })
 Groups.Blatant:AddButton('Disappear From Monkey Boss Fight', function()
 	pcall(function()
 		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SpawnInMonkey.Value == true then
 			client.Character:PivotTo(client.Character:GetPivot() * CFrame.new(0, -100, 0))
 		else
-			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
+			UI:Notify("Monkey boss fight game is over or hasn't started.", 3)
 		end
 	end)
 end)
@@ -398,31 +453,50 @@ Groups.Blatant:AddButton('TP To Rocket', function()
 				UI:Notify('Rocket not found.', 3)
 			end
 		else
-			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
+			UI:Notify("Monkey boss fight game is over or hasn't started.", 3)
 		end
 	end)
 end)
 Groups.Blatant:AddButton('Disappear From Hide and Seek', function()
 	pcall(function()
 		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SPAWNINSKETCHGAME.Value == true then
-			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
+			client.Character:PivotTo(CFrame.new(-1600, 40, -2800))
 		else
-			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
+			UI:Notify("Hide and seek game is over or hasn't started.", 3)
 		end
 	end)
 end)
 Groups.Blatant:AddButton('Disappear From Dodgeball', function()
 	pcall(function()
-		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 80, client.Character:GetPivot().Position.Z))
+		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DodgeballInstructions.Value == true then
+			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 80, client.Character:GetPivot().Position.Z))
+		else
+			UI:Notify("Dodgeball hasn't started.", 3)
+		end
 	end)
 end)
-Groups.Blatant:AddButton('Final Round Fight Platform Large', function()
+Groups.Blatant:AddButton('Disappear From Hot Potato Zone', function()
+	pcall(function()
+		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or (workspace.Effects:FindFirstChild('PotatoBomb') or workspace.FINALERevivesDisable.Value == true) then
+			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 65, client.Character:GetPivot().Position.Z))
+		else
+			UI:Notify("Hot Potato hasn't started.", 3)
+		end
+	end)
+end)
+Groups.Blatant:AddToggle('AntiPotato', { Text = 'Anti Hot Potato' })
+Groups.Blatant:AddButton('Final Round Fight No Fall', function()
 	pcall(function()
 		if workspace:FindFirstChild('ArenaPart4') then
+			workspace.ArenaPart4.Transparency = 0.5
+			workspace.ArenaPart4.BrickColor = BrickColor.new('Lime green')
 			workspace.ArenaPart4.Size = Vector3.new(3, 2000, 2000)
 		end
 	end)
 end)
+Groups.Troll = Tabs.Main:AddRightGroupbox('Troll')
+Groups.Troll:AddToggle('RequestChairAura', { Text = 'Throw Chair Aura' })
+Groups.Troll:AddToggle('DeleteChairAura', { Text = 'Delete Chair Aura' })
 
 Groups.Configs = Tabs.UISettings:AddRightGroupbox('Configs')
 Groups.Credits = Tabs.UISettings:AddRightGroupbox('Credits')
