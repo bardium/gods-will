@@ -16,10 +16,10 @@ local themeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/
 
 local metadata = loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/gods-will/main/metadata.lua'))()
 local httpService = game:GetService('HttpService')
-local httprequest = (syn and syn.request) or http and http.request or http_request or (fluxus and fluxus.request) or request
 
 local runService = game:GetService('RunService')
 local repStorage = game:GetService('ReplicatedStorage')
+local virtualInputManager = game:GetService("VirtualInputManager")
 local tpService = game:GetService('TeleportService')
 
 do
@@ -49,64 +49,73 @@ do
 	shared._id = httpService:GenerateGUID(false)
 end
 
+local function getGlobalWalkSpeed()
+	local allWalkSpeeds = {}
+
+	for _, v in ipairs(game.Players:GetPlayers()) do
+		if v ~= client and v.Character and v.Character:FindFirstChildOfClass('Humanoid') then
+			local humanoid = v.Character:FindFirstChildOfClass('Humanoid')
+			if tonumber(humanoid.WalkSpeed) > 0 then
+				table.insert(allWalkSpeeds, tonumber(humanoid.WalkSpeed))
+			end
+		end
+	end
+
+	local walkSpeedCounts = {}
+	for _, walkSpeed in ipairs(allWalkSpeeds) do
+		if walkSpeedCounts[walkSpeed] then
+			walkSpeedCounts[walkSpeed] = walkSpeedCounts[walkSpeed] + 1
+		else
+			walkSpeedCounts[walkSpeed] = 1
+		end
+	end
+
+	local mostCommonWalkSpeed = 4
+	local highestCount = 0
+	for walkSpeed, count in pairs(walkSpeedCounts) do
+		if count > highestCount then
+			mostCommonWalkSpeed = walkSpeed
+			highestCount = count
+		end
+	end
+	return tonumber(mostCommonWalkSpeed)
+end
+
 do
 	local thread = task.spawn(function()
-		local function getGlobalWalkSpeed()
-			local allWalkSpeeds = {}
-
-			for _, v in ipairs(game.Players:GetPlayers()) do
-				if v ~= client and v.Character and v.Character:FindFirstChildOfClass('Humanoid') then
-					local humanoid = v.Character:FindFirstChildOfClass('Humanoid')
-					if tonumber(humanoid.WalkSpeed) > 0 then
-						table.insert(allWalkSpeeds, tonumber(humanoid.WalkSpeed))
-					end
-				end
-			end
-
-			local walkSpeedCounts = {}
-			for _, walkSpeed in ipairs(allWalkSpeeds) do
-				if walkSpeedCounts[walkSpeed] then
-					walkSpeedCounts[walkSpeed] = walkSpeedCounts[walkSpeed] + 1
-				else
-					walkSpeedCounts[walkSpeed] = 1
-				end
-			end
-			
-			local mostCommonWalkSpeed = 4
-			local highestCount = 0
-			for walkSpeed, count in pairs(walkSpeedCounts) do
-				if count > highestCount then
-					mostCommonWalkSpeed = walkSpeed
-					highestCount = count
-				end
-			end
-			return tonumber(mostCommonWalkSpeed)
-		end
 		while true do
 			task.wait()
 			if ((Toggles.DarumaGameFreeze) and (Toggles.DarumaGameFreeze.Value)) then
 				if workspace:FindFirstChild('DarumaGameStart') then
-					if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.DarumaGameStart.Value == true then
+					if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DarumaGameCutsceneStop1.Value == true then
 						if workspace:FindFirstChild('NotLooking') and client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
 							local humanoid = client.Character:FindFirstChildOfClass('Humanoid')
 							if workspace.NotLooking.Value == false then
 								task.wait(Options.FreezeDelay.Value)
 								humanoid.WalkSpeed = 0
 								UI:Notify('Stop moving or you will die. Do not hold any keys.', 3)
-								repeat task.wait() until workspace.NotLooking.Value == true or ((not Toggles.DarumaGameFreeze) or (not Toggles.DarumaGameFreeze.Value))
+								repeat task.wait() until workspace.NotLooking.Value == true or ((not Toggles.DarumaGameFreeze) or (not Toggles.DarumaGameFreeze.Value)) or workspace.DarumaGameStart.Value == false
 							else
 								if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
-									UI:Notify('You can move again.', 3)
-									client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
-									repeat task.wait() until workspace.NotLooking.Value == false or ((not Toggles.DarumaGameFreeze) or (not Toggles.DarumaGameFreeze.Value))
-									if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
+									if workspace.DarumaGameStart.Value == true then
+										UI:Notify('You can move again.', 3)
 										client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
+										repeat task.wait() until workspace.NotLooking.Value == false or ((not Toggles.DarumaGameFreeze) or (not Toggles.DarumaGameFreeze.Value)) or workspace.DarumaGameStart.Value == false
+										if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
+											client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
+										end
+									else
+										UI:Notify('Daruma game is over.', 3)
+										Toggles.DarumaGameFreeze:SetValue(false)
+										if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
+											client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
+										end
 									end
 								end
 							end
 						end
 					else
-						UI:Notify('Daruma game is over or hasnt started.', 3)
+						UI:Notify("Daruma game hasn't started", 3)
 						Toggles.DarumaGameFreeze:SetValue(false)
 						if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
 							client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
@@ -123,32 +132,36 @@ end
 
 do
 	local thread = task.spawn(function()
-		local correctDoorHighlight = nil
-		if game.CoreGui:FindFirstChild('correctDoorHighlight') then
-			correctDoorHighlight = game.CoreGui.correctDoorHighlight
-		else
-			correctDoorHighlight = Instance.new('Highlight', game.CoreGui)
-		end
-		correctDoorHighlight.Name = 'correctDoorHighlight'
 		while true do
 			task.wait()
-			if ((Toggles.HighlightCorrectDoor) and (Toggles.HighlightCorrectDoor.Value)) then
+			if ((Toggles.HighlightCorrectDoors) and (Toggles.HighlightCorrectDoors.Value)) then
 				if workspace:FindFirstChild('CorrectDoor') and workspace:FindFirstChild('MainRooms') and workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true) then
-					if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.DoorsGameOn.Value == true then
+					if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DoorsGameOn.Value == true then
 						local diamondPlateRooms = workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true)
 
 						for _, v in ipairs(diamondPlateRooms:GetChildren()) do
 							if v:FindFirstChild('ActualDoor') and v.ActualDoor:FindFirstChild('Door') and v.ActualDoor.Door:FindFirstChildOfClass('Decal') then
 								if v.ActualDoor.Door:FindFirstChildOfClass('Decal').Texture == workspace.CorrectDoor.Value then
-									correctDoorHighlight.FillColor = Color3.new(0, 1, 0)
-									correctDoorHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-									correctDoorHighlight.Adornee = v.ActualDoor
+									if not v.ActualDoor:FindFirstChild('correctDoorHighlight') then
+										local correctDoorHighlight = Instance.new('BoxHandleAdornment', v.ActualDoor)
+										correctDoorHighlight.Name = 'correctDoorHighlight'
+										correctDoorHighlight.Adornee = v.ActualDoor
+										correctDoorHighlight.AlwaysOnTop = true
+										correctDoorHighlight.ZIndex = 0
+										correctDoorHighlight.Size = v.ActualDoor:GetExtentsSize()
+										correctDoorHighlight.Transparency = 0.5
+										correctDoorHighlight.Color = BrickColor.new('Lime green')
+									end
+								else
+									if v.ActualDoor:FindFirstChild('correctDoorHighlight') then
+										v.ActualDoor.correctDoorHighlight:Destroy()
+									end
 								end
 							end
 						end
 					else
 						UI:Notify('Doors game is over or hasnt started.', 3)
-						Toggles.HighlightCorrectDoor:SetValue(false)
+						Toggles.HighlightCorrectDoors:SetValue(false)
 					end
 				end
 			end
@@ -165,7 +178,7 @@ do
 			task.wait()
 			if ((Toggles.TPToCorrectDoor) and (Toggles.TPToCorrectDoor.Value)) then
 				if workspace:FindFirstChild('CorrectDoor') and workspace:FindFirstChild('MainRooms') and workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true) then
-					if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.DoorsGameOn.Value == true then
+					if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DoorsGameOn.Value == true then
 						local diamondPlateRooms = workspace.MainRooms:FindFirstChild('DiamondPlateRooms', true)
 
 						for _, v in ipairs(diamondPlateRooms:GetChildren()) do
@@ -199,10 +212,9 @@ do
 							local mainPart = v:FindFirstChild('school-room-chair'):FindFirstChild('Meshes/Grime desk_Chair wood.001')
 							mainPart.BrickColor = BrickColor.new('Lime green')
 							mainPart.Material = Enum.Material.Neon
-							mainPart.Transparency = 0.5
+							mainPart.Transparency = 0
 							mainPart.TextureID = ''
 							mainPart.Size = Vector3.new(3, 3, 3)
-							mainPart.CanCollide = false
 						end
 					end
 				end
@@ -219,7 +231,7 @@ do
 		while true do
 			task.wait()
 			if ((Toggles.VoteMostPopular) and (Toggles.VoteMostPopular.Value)) then
-				if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace:FindFirstChild('VOTINGON') and workspace.VOTINGON.Value == true then
+				if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace:FindFirstChild('VOTINGON') and workspace.VOTINGON.Value == true then
 					local highestVotes = 0
 					local mostPopular = nil
 					for _, v in ipairs(game.Players:GetPlayers()) do
@@ -234,8 +246,7 @@ do
 						end
 					end
 					if mostPopular ~= nil then
-						warn('Voted for', mostPopular.Name)
-						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("VotePersonOut"):FireServer(mostPopular.Name)
+						repStorage.Remotes.VotePersonOut:FireServer(mostPopular.Name)
 					end
 				else
 
@@ -253,7 +264,7 @@ do
 		while true do
 			task.wait()
 			if ((Toggles.RequestChairAura) and (Toggles.RequestChairAura.Value)) then
-				game:GetService("ReplicatedStorage").RequestChair:FireServer()
+				repStorage.RequestChair:FireServer()
 			end
 		end
 	end)
@@ -285,18 +296,18 @@ Groups.Games:AddToggle('DarumaGameFreeze', { Text = 'Freeze During Daruma Game' 
 Groups.Games:AddSlider('FreezeDelay',   { Text = 'Freeze Delay', Min = 0, Max = 0.65, Default = 0.25, Suffix = 's', Rounding = 3, Compact = true })
 
 local DependencySlider = Groups.Games:AddDependencyBox();
-addRichText(DependencySlider:AddLabel('<font color="#ff430a">Freeze Delay greater than 0.45s\ncan get you killed.</font>'))
+addRichText(DependencySlider:AddLabel('<font color="#ff430a">Freeze Delay greater than 0.45s can get you killed.</font>', true))
 
 DependencySlider:SetupDependencies({
 	{ Options.FreezeDelay, 0.45 }
 });
 
-Groups.Games:AddToggle('HighlightCorrectDoor', { Text = 'Highlight Correct Door' })
+Groups.Games:AddToggle('HighlightCorrectDoors', { Text = 'Highlight Correct Doors' })
 Groups.Games:AddToggle('HighlightCorrectChairs', { Text = 'Highlight Correct Chairs' })
 Groups.Games:AddToggle('VoteMostPopular', { Text = 'Vote Most Popular' })
 Groups.Games:AddButton('Finish Sled Game', function()
 	pcall(function()
-		if workspace:FindFirstChild('Finish') and workspace:FindFirstChild('SledGame') and ((((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.SledGame.Value == true) then
+		if workspace:FindFirstChild('Finish') and workspace:FindFirstChild('SledGameInstructionsStop') and ((((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SledGameInstructionsStop.Value == true) then
 			for _, v in ipairs(client.Character.PrimaryPart:GetChildren()) do
 				if v:IsA('BodyVelocity') or v:IsA('BodyGyro') then
 					v:Destroy()
@@ -308,6 +319,8 @@ Groups.Games:AddButton('Finish Sled Game', function()
 					client.Character:PivotTo(v:GetPivot())
 				end
 			end
+			task.wait(.1)
+			client.Character:PivotTo(game.Players.LocalPlayer.Character:GetPivot() * CFrame.Angles(math.rad(180), 0, 0))
 		else
 			UI:Notify('Sled game is over or hasnt started.', 3)
 		end
@@ -315,7 +328,7 @@ Groups.Games:AddButton('Finish Sled Game', function()
 end)
 
 Groups.Misc = Tabs.Main:AddRightGroupbox('Misc')
-Groups.Misc:AddToggle('DisableGameChecks', { Text = 'Disable In Game Checks' })
+Groups.Misc:AddToggle('CheckIfInGame', { Text = 'Check if in game', Default = true })
 local collectingCoins = false
 Groups.Misc:AddButton('Collect All Coins', function()
 	if not collectingCoins then
@@ -341,44 +354,35 @@ Groups.Misc:AddButton('Collect All Coins', function()
 end)
 Groups.Misc:AddButton('Fix Speed', function()
 	pcall(function()
-		local allWalkSpeeds = {}
-
-		for _, v in ipairs(game.Players:GetPlayers()) do
-			if v ~= client and v.Character and v.Character:FindFirstChildOfClass('Humanoid') then
-				local humanoid = v.Character:FindFirstChildOfClass('Humanoid')
-				if tonumber(humanoid.WalkSpeed) > 0 then
-					table.insert(allWalkSpeeds, tonumber(humanoid.WalkSpeed))
-				end
-			end
-		end
-
-		local walkSpeedCounts = {}
-		for _, walkSpeed in ipairs(allWalkSpeeds) do
-			if walkSpeedCounts[walkSpeed] then
-				walkSpeedCounts[walkSpeed] = walkSpeedCounts[walkSpeed] + 1
-			else
-				walkSpeedCounts[walkSpeed] = 1
-			end
-		end
-
-		local mostCommonWalkSpeed = 4
-		local highestCount = 0
-		for walkSpeed, count in pairs(walkSpeedCounts) do
-			if count > highestCount then
-				mostCommonWalkSpeed = walkSpeed
-				highestCount = count
-			end
-		end
-		client.Character.Humanoid.WalkSpeed = tonumber(mostCommonWalkSpeed)
+		client.Character.Humanoid.WalkSpeed = tonumber(getGlobalWalkSpeed())
 	end)
 end)
 
 Groups.Blatant = Tabs.Main:AddRightGroupbox('Blatant')
+Groups.Blatant:AddButton('Finish Daruma Game', function()
+	pcall(function()
+		local button = workspace.DarumaGameMap.GameFunctions.DarumaDoll.ActualThing.Button
+		local prompt = button:FindFirstChildOfClass('ProximityPrompt')
+		local currentPivot = client.Character:GetPivot()
+		client.Character:PivotTo(currentPivot * CFrame.new(0, -100, 0))
+		task.wait(.1)
+		repeat
+			prompt.Enabled = true
+			prompt.RequiresLineOfSight = false
+			client.Character:PivotTo(button:GetPivot() * CFrame.new(0, -2, 0))
+			virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
+			virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+			task.wait()
+		until workspace.DarumaGameStart.Value == false
+		
+		client.Character:PivotTo(currentPivot)
+	end)
+end)
 Groups.Blatant:AddToggle('TPToCorrectDoor', { Text = 'TP Correct Door Room' })
 Groups.Blatant:AddToggle('RequestChairAura', { Text = 'Throw Chair Aura' })
 Groups.Blatant:AddButton('Disappear From Monkey Boss Fight', function()
 	pcall(function()
-		if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.MonkeyGameStart.Value == true then
+		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SpawnInMonkey.Value == true then
 			client.Character:PivotTo(client.Character:GetPivot() * CFrame.new(0, -100, 0))
 		else
 			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
@@ -387,7 +391,7 @@ Groups.Blatant:AddButton('Disappear From Monkey Boss Fight', function()
 end)
 Groups.Blatant:AddButton('TP To Rocket', function()
 	pcall(function()
-		if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.MonkeyGameStart.Value == true then
+		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SpawnInMonkey.Value == true then
 			if workspace.Effects:FindFirstChild('Rocket') then
 				client.Character:PivotTo(workspace.Effects.Rocket:GetPivot())
 			else
@@ -400,12 +404,23 @@ Groups.Blatant:AddButton('TP To Rocket', function()
 end)
 Groups.Blatant:AddButton('Disappear From Hide and Seek', function()
 	pcall(function()
-		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
+		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SPAWNINSKETCHGAME.Value == true then
+			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
+		else
+			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
+		end
 	end)
 end)
 Groups.Blatant:AddButton('Disappear From Dodgeball', function()
 	pcall(function()
 		client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 80, client.Character:GetPivot().Position.Z))
+	end)
+end)
+Groups.Blatant:AddButton('Final Round Fight Platform Large', function()
+	pcall(function()
+		if workspace:FindFirstChild('ArenaPart4') then
+			workspace.ArenaPart4.Size = Vector3.new(3, 2000, 2000)
+		end
 	end)
 end)
 
@@ -416,7 +431,7 @@ addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">Goose Better</font> -
 addRichText(Groups.Credits:AddLabel('<font color="#3da5ff">wally & Inori</font> - ui library'))
 
 Groups.UISettings = Tabs.UISettings:AddRightGroupbox('UI Settings')
-Groups.UISettings:AddLabel(metadata.message or 'no message found!', true)
+Groups.UISettings:AddLabel('Changelogs:\n' .. metadata.message or 'no message found!', true)
 Groups.UISettings:AddDivider()
 Groups.UISettings:AddButton('Unload Script', function() pcall(shared._unload) end)
 Groups.UISettings:AddButton('Copy Discord', function()
