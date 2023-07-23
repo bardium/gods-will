@@ -90,6 +90,7 @@ do
 						if workspace:FindFirstChild('NotLooking') and client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
 							local humanoid = client.Character:FindFirstChildOfClass('Humanoid')
 							if workspace.NotLooking.Value == false then
+								task.wait(Options.FreezeDelay.Value)
 								humanoid.WalkSpeed = 0
 								UI:Notify('Stop moving or you will die. Do not hold any keys.', 3)
 								repeat task.wait() until workspace.NotLooking.Value == true or ((not Toggles.DarumaGameFreeze) or (not Toggles.DarumaGameFreeze.Value))
@@ -261,6 +262,10 @@ do
 	end)
 end
 
+local function addRichText(label)
+	label.TextLabel.RichText = true
+end
+
 local Window = UI:CreateWindow({
 	Title = string.format('gods will - version %s | updated: %s', metadata.version, metadata.updated),
 	AutoShow = true,
@@ -277,6 +282,15 @@ Tabs.UISettings = Window:AddTab('UI Settings')
 
 Groups.Games = Tabs.Main:AddLeftGroupbox('Games')
 Groups.Games:AddToggle('DarumaGameFreeze', { Text = 'Freeze During Daruma Game' })
+Groups.Games:AddSlider('FreezeDelay',   { Text = 'Freeze Delay', Min = 0, Max = 0.65, Default = 0.25, Suffix = 's', Rounding = 3, Compact = true })
+
+local DependencySlider = Groups.Games:AddDependencyBox();
+addRichText(DependencySlider:AddLabel('<font color="#ff430a">Freeze Delay greater than 0.45s\ncan get you killed.</font>'))
+
+DependencySlider:SetupDependencies({
+	{ Options.FreezeDelay, 0.45 }
+});
+
 Groups.Games:AddToggle('HighlightCorrectDoor', { Text = 'Highlight Correct Door' })
 Groups.Games:AddToggle('HighlightCorrectChairs', { Text = 'Highlight Correct Chairs' })
 Groups.Games:AddToggle('VoteMostPopular', { Text = 'Vote Most Popular' })
@@ -296,6 +310,15 @@ Groups.Games:AddButton('Finish Sled Game', function()
 			end
 		else
 			UI:Notify('Sled game is over or hasnt started.', 3)
+		end
+	end)
+end)
+Groups.Games:AddButton('Disappear From Hide and Seek', function()
+	pcall(function()
+		if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.TheyHaveToHide.Value == true then
+			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 460, client.Character:GetPivot().Position.Z))
+		else
+			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
 		end
 	end)
 end)
@@ -376,6 +399,8 @@ Groups.Blatant:AddButton('TP To Rocket', function()
 		if (((Toggles.DisableGameChecks) and (Toggles.DisableGameChecks.Value))) or workspace.MonkeyGameStart.Value == true then
 			if workspace.Effects:FindFirstChild('Rocket') then
 				client.Character:PivotTo(workspace.Effects.Rocket:GetPivot())
+			else
+				UI:Notify('Rocket not found.', 3)
 			end
 		else
 			UI:Notify('Monkey boss fight game is over or hasnt started.', 3)
@@ -385,13 +410,9 @@ end)
 
 Groups.Configs = Tabs.UISettings:AddRightGroupbox('Configs')
 Groups.Credits = Tabs.UISettings:AddRightGroupbox('Credits')
-local function addRichText(label)
-	label.TextLabel.RichText = true
-end
 
 addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">Goose Better</font> - script'))
 addRichText(Groups.Credits:AddLabel('<font color="#3da5ff">wally & Inori</font> - ui library'))
-
 
 Groups.UISettings = Tabs.UISettings:AddRightGroupbox('UI Settings')
 Groups.UISettings:AddDivider()
