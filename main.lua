@@ -258,6 +258,7 @@ do
 		while true do
 			task.wait()
 			if ((Toggles.DeleteChairAura) and (Toggles.DeleteChairAura.Value)) then
+				local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') then
 						for _, v in pairs(game.Players:GetPlayers()) do
@@ -278,6 +279,7 @@ do
 					end
 				else
 					UI:Notify('Incompatible Exploit: Your exploit does not support this command (missing sethiddenproperty)', 5)
+					Toggles.DeleteChairAura:SetValue(false)
 				end
 			end
 		end
