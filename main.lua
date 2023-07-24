@@ -262,45 +262,22 @@ do
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') and workspace.MusicalChairsMap:FindFirstChild('FakeChairs') then
 						for _, chair in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
-							for _, v in ipairs(chair:GetChildren()) do
-								if v:IsA('BasePart') and v.Anchored == false and not v:FindFirstChildWhichIsA('BodyPosition') then
-									local ForceInstance = Instance.new('BodyPosition')
-									ForceInstance.Parent = v
-									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-									ForceInstance.Position = Vector3.new(1500, 0, 1500)
-								end
-								if v:IsA('Model') then
-									for _, part in ipairs(v:GetChildren()) do
-										if part:IsA('BasePart') and part.Anchored == false and not v:FindFirstChildWhichIsA('BodyPosition') then
-											local ForceInstance = Instance.new('BodyPosition')
-											ForceInstance.Parent = part
-											ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-											ForceInstance.Position = Vector3.new(1500, 0, 1500)
-										end
-									end
-								end
+							if chair:FindFirstChild('Seat') and chair.Seat.Anchored == false and not chair.Seat:FindFirstChild('BodyPosition') then
+								local ForceInstance = Instance.new('BodyPosition')
+								ForceInstance.Parent = chair.Seat
+								ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+								ForceInstance.Position = Vector3.new(1500, 0, 1500)
 							end
 						end
 						for _, chair in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
-							for _, v in ipairs(chair:GetChildren()) do
-								if v:IsA('BasePart') and v.Anchored == false and not v:FindFirstChild('BodyPosition') then
-									local ForceInstance = Instance.new('BodyPosition')
-									ForceInstance.Parent = v
-									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-									ForceInstance.Position = Vector3.new(1500, 0, 1500)
-								end
-								if v:IsA('Model') then
-									for _, part in ipairs(v:GetChildren()) do
-										if part:IsA('BasePart') and part.Anchored == false and not v:FindFirstChild('BodyPosition') then
-											local ForceInstance = Instance.new('BodyPosition')
-											ForceInstance.Parent = part
-											ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-											ForceInstance.Position = Vector3.new(1500, 0, 1500)
-										end
-									end
-								end
+							if chair:FindFirstChild('Seat') and chair.Seat.Anchored == false and not chair.Seat:FindFirstChild('BodyPosition') then
+								local ForceInstance = Instance.new('BodyPosition')
+								ForceInstance.Parent = chair.Seat
+								ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+								ForceInstance.Position = Vector3.new(1500, 0, 1500)
 							end
 						end
+						task.wait()
 					end
 				else
 					UI:Notify('Incompatible Exploit: Your exploit does not support this command (missing sethiddenproperty)', 5)
@@ -551,7 +528,6 @@ Groups.Troll = Tabs.Main:AddRightGroupbox('Troll')
 Groups.Troll:AddToggle('RequestChairAura', { Text = 'Throw Chair Aura' })
 Groups.Troll:AddToggle('DeleteChairAura', { Text = 'Delete Chair Aura' })
 
-Groups.Configs = Tabs.UISettings:AddRightGroupbox('Configs')
 Groups.Credits = Tabs.UISettings:AddRightGroupbox('Credits')
 
 addRichText(Groups.Credits:AddLabel('<font color="#0bff7e">Goose Better</font> - script'))
