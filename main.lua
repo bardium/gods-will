@@ -261,23 +261,17 @@ do
 				local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') and workspace.MusicalChairsMap:FindFirstChild('FakeChairs') then
-						for _, v in pairs(game.Players:GetPlayers()) do
-							for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
-								if v.Character ~= nil and v.Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
-									local ForceInstance = Instance.new('BodyPosition')
-									ForceInstance.Parent = part
-									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-									ForceInstance.Position = Vector3.new(1500, 0, 1500)
-								end
-							end
-							for _, part in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
-								if game.Players[v.Name].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
-									local ForceInstance = Instance.new('BodyPosition')
-									ForceInstance.Parent = part
-									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-									ForceInstance.Position = Vector3.new(1500, 0, 1500)
-								end
-							end
+						for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
+							local ForceInstance = Instance.new('BodyPosition')
+							ForceInstance.Parent = part
+							ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+							ForceInstance.Position = Vector3.new(1500, 0, 1500)
+						end
+						for _, part in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
+							local ForceInstance = Instance.new('BodyPosition')
+							ForceInstance.Parent = part
+							ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+							ForceInstance.Position = Vector3.new(1500, 0, 1500)
 						end
 					end
 				else
