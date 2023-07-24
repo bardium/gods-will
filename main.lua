@@ -440,14 +440,30 @@ Groups.Blatant:AddButton('Finish Daruma Game', function()
 			local currentPivot = client.Character:GetPivot()
 			client.Character:PivotTo(currentPivot * CFrame.new(0, -100, 0))
 			task.wait(.5)
+			local parts = {}
+			for _, v in ipairs(client.Character:GetDescendants()) do
+				if v:IsA('BasePart') then
+					table.insert(parts, v)
+					v.CanCollide = false
+				end
+			end
+			client.Character:PivotTo(workspace.DarumaGameMap.GameFunctions.DarumaDoll:GetPivot() * CFrame.new(0, -3, 2))
+			UI:Notify('Make sure your character is facing the daruma doll button', 3)
 			repeat
 				prompt.Enabled = true
 				prompt.RequiresLineOfSight = false
-				client.Character:PivotTo(workspace.DarumaGameMap.GameFunctions.DarumaDoll:GetPivot() * CFrame.new(0, -3, 2))
+				task.wait()
+				client.Character:PivotTo(workspace.DarumaGameMap.GameFunctions.DarumaDoll:GetPivot() * CFrame.new(0, -3, 2), button.Position)
 				virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
 				virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
 				task.wait()
 			until workspace.DarumaGameStart.Value == false or not button:FindFirstChildOfClass('ProximityPrompt')
+			for _, v in ipairs(parts) do
+				if v:IsA('BasePart') and v:IsDescendantOf(client.Character) then
+					v.CanCollide = true
+				end
+			end
+			task.wait()
 			client.Character:PivotTo(currentPivot)
 		end
 	end)
