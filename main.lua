@@ -489,15 +489,6 @@ Groups.Blatant:AddButton('TP To Opposite Team Dodgeball', function()
 		client.Character:PivotTo(desiredPivot)
 	end)
 end)
-Groups.Blatant:AddButton('Disappear From Dodgeball', function()
-	pcall(function()
-		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DodgeballInstructions.Value == true then
-			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 80, client.Character:GetPivot().Position.Z))
-		else
-			UI:Notify("Dodgeball hasn't started.", 3)
-		end
-	end)
-end)
 Groups.Blatant:AddButton('Disappear From Hot Potato Zone', function()
 	pcall(function()
 		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or (workspace.Effects:FindFirstChild('PotatoBomb') or workspace.FINALERevivesDisable.Value == true) then
