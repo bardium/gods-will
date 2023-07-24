@@ -468,6 +468,27 @@ Groups.Blatant:AddButton('Disappear From Hide and Seek', function()
 		end
 	end)
 end)
+Groups.Blatant:AddButton('TP To Opposite Team Dodgeball', function()
+	pcall(function()
+		local oppositeTeam = 1
+		for _, v in ipairs(game.Players:GetPlayers()) do
+			if v.Character ~= nil and type(v.Character:GetAttribute('teamdodgeball')) == 'number' and type(client.Character:GetAttribute('teamdodgeball')) == 'number' and v.Character:GetAttribute('teamdodgeball') ~= client.Character:GetAttribute('teamdodgeball') then
+				oppositeTeam = tostring(v.Character:GetAttribute('teamdodgeball'))
+			end
+		end
+		local desiredPivot = client.Character:GetPivot()
+		local lowestNumber = 999
+		if workspace.dodgeballmap.spawns:FindFirstChild(tostring('team') .. oppositeTeam) then
+			for _, v in ipairs(workspace.dodgeballmap.spawns:FindFirstChild(tostring('team') .. oppositeTeam):GetChildren()) do
+				if v:IsA('BasePart') and not v:GetAttribute('spawned') and tonumber(v.Name) < lowestNumber then
+					lowestNumber = tonumber(v.Name)
+					desiredPivot = v:GetPivot()
+				end
+			end
+		end
+		client.Character:PivotTo(desiredPivot)
+	end)
+end)
 Groups.Blatant:AddButton('Disappear From Dodgeball', function()
 	pcall(function()
 		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.DodgeballInstructions.Value == true then
@@ -499,27 +520,6 @@ end)
 Groups.Troll = Tabs.Main:AddRightGroupbox('Troll')
 Groups.Troll:AddToggle('RequestChairAura', { Text = 'Throw Chair Aura' })
 Groups.Troll:AddToggle('DeleteChairAura', { Text = 'Delete Chair Aura' })
-Groups.Troll:AddButton('TP To Opposite Team Dodgeball', function()
-	pcall(function()
-		local oppositeTeam = 1
-		for _, v in ipairs(game.Players:GetPlayers()) do
-			if v.Character ~= nil and type(v.Character:GetAttribute('teamdodgeball')) == 'number' and type(client.Character:GetAttribute('teamdodgeball')) == 'number' and v.Character:GetAttribute('teamdodgeball') ~= client.Character:GetAttribute('teamdodgeball') then
-				oppositeTeam = tostring(v.Character:GetAttribute('teamdodgeball'))
-			end
-		end
-		local desiredPivot = client.Character:GetPivot()
-		local lowestNumber = 999
-		if workspace.dodgeballmap.spawns:FindFirstChild(tostring('team') .. oppositeTeam) then
-			for _, v in ipairs(workspace.dodgeballmap.spawns:FindFirstChild(tostring('team') .. oppositeTeam):GetChildren()) do
-				if v:IsA('BasePart') and not v:GetAttribute('spawned') and tonumber(v.Name) < lowestNumber then
-					lowestNumber = tonumber(v.Name)
-					desiredPivot = v:GetPivot()
-				end
-			end
-		end
-		client.Character:PivotTo(desiredPivot)
-	end)
-end)
 
 Groups.Configs = Tabs.UISettings:AddRightGroupbox('Configs')
 Groups.Credits = Tabs.UISettings:AddRightGroupbox('Credits')
