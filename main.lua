@@ -313,7 +313,7 @@ do
 				if workspace:FindFirstChild('Effects') and workspace.Effects:FindFirstChild('PotatoBomb') then
 					if workspace.Effects.PotatoBomb:FindFirstChild('PotatoWeld') and workspace.Effects.PotatoBomb.PotatoWeld.Part0 ~= nil and workspace.Effects.PotatoBomb.PotatoWeld.Part0:IsDescendantOf(client.Character) then
 						for _, v in ipairs(game.Players:GetPlayers()) do
-							if v ~= client and v.Character ~= nil and v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 and not v.Character:FindFirstChild('Immune') then
+							if v ~= client and v.Character ~= nil and v.Character:FindFirstChild('Humanoid') and not v.Character:FindFirstChild('Immune') and not v.Character:FindFirstChild('Ragdoll') then
 								local currentPivot = client.Character:GetPivot()
 								repeat
 									client.Character:PivotTo(v.Character:GetPivot())
