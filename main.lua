@@ -257,11 +257,11 @@ do
 	local thread = task.spawn(function()
 		while true do
 			task.wait()
-			if ((Toggles.RequestChairAura) and (Toggles.RequestChairAura.Value)) then
+			if ((Toggles.DeleteChairAura) and (Toggles.DeleteChairAura.Value)) then
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') then
 						for _, v in pairs(game.Players:GetPlayers()) do
-							for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
+							for _, part in pairs(workspace.MusicalChairsMap.Chairs.Parent:GetDescendants()) do
 								if game.Players[v].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
 									for _, c in pairs(part:GetChildren()) do
 										if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
@@ -291,7 +291,7 @@ do
 	local thread = task.spawn(function()
 		while true do
 			task.wait()
-			if ((Toggles.DeleteChairAura) and (Toggles.DeleteChairAura.Value)) then
+			if ((Toggles.RequestChairAura) and (Toggles.RequestChairAura.Value)) then
 				repStorage.RequestChair:FireServer()
 			end
 		end
