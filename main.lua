@@ -261,7 +261,7 @@ do
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') then
 						for _, v in pairs(game.Players:GetPlayers()) do
-							for _, part in pairs(workspace.MusicalChairsMap.Chairs.Parent:GetDescendants()) do
+							for _, part in pairs(workspace.MusicalChairsMap:GetDescendants()) do
 								if game.Players[v].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
 									for _, c in pairs(part:GetChildren()) do
 										if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
@@ -375,8 +375,6 @@ Groups.Legit:AddButton('Finish Sled Game', function()
 				end
 			end
 			task.wait(.1)
-			client.Character:PivotTo(game.Players.LocalPlayer.Character:GetPivot() * CFrame.Angles(math.rad(180), 0, 0))
-			task.wait(.1)
 			client:PivotTo(CFrame.new(client:GetPivot(), Vector3.new(client:GetPivot().X, client:GetPivot().Y, 251)))
 		else
 			UI:Notify("Sled game is over or hasn't started.", 3)
@@ -440,7 +438,7 @@ Groups.Blatant:AddToggle('TPToCorrectDoor', { Text = 'TP Correct Door Room' })
 Groups.Blatant:AddButton('Disappear From Monkey Boss Fight', function()
 	pcall(function()
 		if (((not Toggles.CheckIfInGame) or (not Toggles.CheckIfInGame.Value))) or workspace.SpawnInMonkey.Value == true then
-			client.Character:PivotTo(client.Character:GetPivot() * CFrame.new(0, -100, 0))
+			client.Character:PivotTo(CFrame.new(client.Character:GetPivot().Position.X, 10, client.Character:GetPivot().Position.Z))
 		else
 			UI:Notify("Monkey boss fight game is over or hasn't started.", 3)
 		end
