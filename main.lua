@@ -105,7 +105,7 @@ do
 											client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
 										end
 									else
-										UI:Notify('Daruma game is over.', 3)
+										UI:Notify("Daruma game is over hasn't started.", 3)
 										Toggles.DarumaGameFreeze:SetValue(false)
 										if client.Character and client.Character:FindFirstChildOfClass('Humanoid') then
 											client.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = getGlobalWalkSpeed()
