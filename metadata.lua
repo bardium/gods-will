@@ -1,5 +1,5 @@
 return {
-	version = '1.04',
+	version = '1.05',
 	updated = '7/23/2023',
-	message = 'tons of bug fixes + more blatant features + troll section'
+	message = 'tp to other team in dodgeball'
 }
