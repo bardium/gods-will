@@ -260,19 +260,38 @@ do
 			if ((Toggles.DeleteChairAura) and (Toggles.DeleteChairAura.Value)) then
 				local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 				if sethidden then
-					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') then
+					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') and workspace.MusicalChairsMap:FindFirstChild('FakeChairs') then
 						for _, v in pairs(game.Players:GetPlayers()) do
-							for _, part in pairs(workspace.MusicalChairsMap:GetDescendants()) do
-								if game.Players[v].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
-									for _, c in pairs(part:GetChildren()) do
-										if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
-											c:Destroy()
+							for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetChildren()) do
+								if game.Players[v.Name].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
+									if not part:FindFirstChild('ForceInstance') then
+										for _, c in pairs(part:GetDescendants()) do
+											if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
+												c:Destroy()
+											end
 										end
+										local ForceInstance = Instance.new('BodyPosition')
+										ForceInstance.Parent = part
+										ForceInstance.Name = 'ForceInstance'
+										ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+										ForceInstance.Position = Vector3.new(math.huge, math.huge, math.huge)
 									end
-									local ForceInstance = Instance.new('BodyPosition')
-									ForceInstance.Parent = part
-									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-									ForceInstance.Position = Vector3.new(0, 0, 0)
+								end
+							end
+							for _, part in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
+								if game.Players[v.Name].Character:FindFirstChild('Head') and part:IsA('BasePart' or 'UnionOperation' or 'Model') and part.Anchored == false and not part:IsDescendantOf(client.Character) and part.Name == 'Torso' == false and part.Name == 'Head' == false and part.Name == 'Right Arm' == false and part.Name == 'Left Arm' == false and part.Name == 'Right Leg' == false and part.Name == 'Left Leg' == false and part.Name == 'HumanoidRootPart' == false then
+									if not part:FindFirstChild('ForceInstance') then
+										for _, c in pairs(part:GetChildren()) do
+											if c:IsA('BodyPosition') or c:IsA('BodyGyro') then
+												c:Destroy()
+											end
+										end
+										local ForceInstance = Instance.new('BodyPosition')
+										ForceInstance.Parent = part
+										ForceInstance.Name = 'ForceInstance'
+										ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+										ForceInstance.Position = Vector3.new(math.huge, math.huge, math.huge)
+									end
 								end
 							end
 						end
