@@ -261,17 +261,45 @@ do
 				local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 				if sethidden then
 					if workspace:FindFirstChild('MusicalChairsMap') and workspace.MusicalChairsMap:FindFirstChild('Chairs') and workspace.MusicalChairsMap:FindFirstChild('FakeChairs') then
-						for _, part in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
-							local ForceInstance = Instance.new('BodyPosition')
-							ForceInstance.Parent = part
-							ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-							ForceInstance.Position = Vector3.new(1500, 0, 1500)
+						for _, chair in pairs(workspace.MusicalChairsMap.Chairs:GetDescendants()) do
+							for _, v in ipairs(chair:GetChildren()) do
+								if v:IsA('BasePart') and v.Anchored == false and not v:FindFirstChildWhichIsA('BodyPosition') then
+									local ForceInstance = Instance.new('BodyPosition')
+									ForceInstance.Parent = v
+									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+									ForceInstance.Position = Vector3.new(1500, 0, 1500)
+								end
+								if v:IsA('Model') then
+									for _, part in ipairs(v:GetChildren()) do
+										if part:IsA('BasePart') and part.Anchored == false and not v:FindFirstChildWhichIsA('BodyPosition') then
+											local ForceInstance = Instance.new('BodyPosition')
+											ForceInstance.Parent = part
+											ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+											ForceInstance.Position = Vector3.new(1500, 0, 1500)
+										end
+									end
+								end
+							end
 						end
-						for _, part in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
-							local ForceInstance = Instance.new('BodyPosition')
-							ForceInstance.Parent = part
-							ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-							ForceInstance.Position = Vector3.new(1500, 0, 1500)
+						for _, chair in pairs(workspace.MusicalChairsMap.FakeChairs:GetDescendants()) do
+							for _, v in ipairs(chair:GetChildren()) do
+								if v:IsA('BasePart') and v.Anchored == false and not v:FindFirstChild('BodyPosition') then
+									local ForceInstance = Instance.new('BodyPosition')
+									ForceInstance.Parent = v
+									ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+									ForceInstance.Position = Vector3.new(1500, 0, 1500)
+								end
+								if v:IsA('Model') then
+									for _, part in ipairs(v:GetChildren()) do
+										if part:IsA('BasePart') and part.Anchored == false and not v:FindFirstChild('BodyPosition') then
+											local ForceInstance = Instance.new('BodyPosition')
+											ForceInstance.Parent = part
+											ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+											ForceInstance.Position = Vector3.new(1500, 0, 1500)
+										end
+									end
+								end
+							end
 						end
 					end
 				else
@@ -308,7 +336,7 @@ do
 				if workspace:FindFirstChild('Effects') and workspace.Effects:FindFirstChild('PotatoBomb') then
 					if workspace.Effects.PotatoBomb:FindFirstChild('PotatoWeld') and workspace.Effects.PotatoBomb.PotatoWeld.Part0 ~= nil and workspace.Effects.PotatoBomb.PotatoWeld.Part0:IsDescendantOf(client.Character) then
 						for _, v in ipairs(game.Players:GetPlayers()) do
-							if v ~= client and v.Character ~= nil and v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 then
+							if v ~= client and v.Character ~= nil and v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 and not v.Character:FindFirstChild('Immune') then
 								local currentPivot = client.Character:GetPivot()
 								repeat
 									client.Character:PivotTo(v.Character:GetPivot())
@@ -319,6 +347,20 @@ do
 						end
 					end
 				end
+			end
+		end
+	end)
+	table.insert(shared.callbacks, function()
+		pcall(task.cancel, thread)
+	end)
+end
+
+do
+	local thread = task.spawn(function()
+		while true do
+			task.wait()
+			if client.Character ~= nil then
+				
 			end
 		end
 	end)
@@ -367,7 +409,7 @@ Groups.Legit:AddButton('Finish Sled Game', function()
 					v:Destroy()
 				end
 			end
-			task.wait()
+			task.wait(.1)
 			for _, v in ipairs(workspace:GetChildren()) do
 				if v.Name == 'FinishLine' and v:IsA('BasePart') then
 					client.Character:PivotTo(v:GetPivot() * CFrame.new(math.random(-40, 40), 8, math.random(50, 100)))
