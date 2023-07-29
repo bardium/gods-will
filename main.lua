@@ -10,6 +10,7 @@ until game:IsLoaded()
 
 local start = tick()
 local client = game:GetService('Players').LocalPlayer;
+local executor = identifyexecutor and identifyexecutor() or 'Unknown'
 
 local UI = loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/LinoriaLib/main/Library.lua'))()
 local themeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/LinoriaLib/main/addons/ThemeManager.lua'))()
@@ -572,3 +573,8 @@ themeManager:SetLibrary(UI)
 themeManager:ApplyToGroupbox(Tabs.UISettings:AddLeftGroupbox('Themes'))
 
 UI:Notify(string.format('Loaded script in %.4f second(s)!', tick() - start), 3)
+if executor ~= 'Electron' and executor ~= 'Valyse' then
+	UI:Notify(string.format('You may experience problems with the script/UI because you are using %s', executor), 30)
+	task.wait()
+	UI:Notify(string.format('Exploits this script works well with: Electron and Valyse'), 30)
+end
